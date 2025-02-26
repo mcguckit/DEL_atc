@@ -8,10 +8,12 @@ import shutil
 # Nick1 spin-up frame: frame_000795_26.489.png (796th frame, 26.489s)
 # Saanvi1 spin-up frame: frame_000780_26.023.png (781st frame, 26.023s)
 
-# Config: Define frame offsets & downsample rate
+# Config: Define frame offsets, end frames & downsample rate
 START_FRAME_N1 = 796  # Nick1's first flight frame
 START_FRAME_S1 = 781  # Saanvi1's first flight frame
-DOWNSAMPLE_RATE = 10  # Extract every 5th frame (adjustable)
+END_FRAME_N1 = 2636   # Nick1's last frame to process (adjustable)
+END_FRAME_S1 = 2621   # Saanvi1's last frame to process (adjustable)
+DOWNSAMPLE_RATE = 10  # Extract every 10th frame (adjustable)
 
 # Paths
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,15 +39,18 @@ def clear_folder(folder):
 clear_folder(synced_n1)
 clear_folder(synced_s1)
 
-def sync_and_downsample_frames(input_folder, output_folder, offset, downsample_rate):
-    """Syncs and downsamples frames from a folder."""
+def sync_and_downsample_frames(input_folder, output_folder, start_frame, end_frame, downsample_rate):
+    """Syncs and downsamples frames from a folder, within the given start and end frames."""
     frame_files = sorted(os.listdir(input_folder))  # Sort to ensure order
 
-    for i, frame_file in enumerate(frame_files):
-        if i < offset:  
-            continue  # Skip the first N frames based on offset
+    for frame_file in frame_files:
+        frame_number = int(frame_file.split("_")[1])  # Extract frame number from filename
 
-        if (i - offset) % downsample_rate != 0:
+        if frame_number < start_frame:
+            continue  # Skip frames before the start frame
+        if frame_number > end_frame:
+            break  # Stop processing once we reach the end frame
+        if (frame_number - start_frame) % downsample_rate != 0:
             continue  # Skip frames to downsample
 
         frame_path = os.path.join(input_folder, frame_file)
@@ -61,7 +66,7 @@ def sync_and_downsample_frames(input_folder, output_folder, offset, downsample_r
         print(f"Saved synced frame: {output_path}")
 
 # Process Nick1 & Saanvi1 frames
-sync_and_downsample_frames(frame_folder_n1, synced_n1, START_FRAME_N1, DOWNSAMPLE_RATE)
-sync_and_downsample_frames(frame_folder_s1, synced_s1, START_FRAME_S1, DOWNSAMPLE_RATE)
+sync_and_downsample_frames(frame_folder_n1, synced_n1, START_FRAME_N1, END_FRAME_N1, DOWNSAMPLE_RATE)
+sync_and_downsample_frames(frame_folder_s1, synced_s1, START_FRAME_S1, END_FRAME_S1, DOWNSAMPLE_RATE)
 
-print(f"Synced & downsampled frames saved in {output_folder}")
+print(f"✅ Synced & downsampled frames saved in {output_folder}")

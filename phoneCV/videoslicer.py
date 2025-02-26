@@ -29,8 +29,8 @@ def extract_frames(video_path, output_folder):
         timestamp = frame_idx / fps  # Time in seconds
         frame_filename = os.path.join(output_folder, f"frame_{frame_idx:06d}_{timestamp:.3f}.png")
         
-        if frame_idx % 10 == 0:  # Save every 10th frame
-            cv2.imwrite(frame_filename, frame)
+        # if frame_idx % 10 == 0:  # Save every 10th frame
+        cv2.imwrite(frame_filename, frame)
         
         if frame_idx % 100 == 0:
             print(f"Processing frame {frame_idx}...")
@@ -45,7 +45,7 @@ def extract_frames(video_path, output_folder):
 
 # Define input and output folders
 input_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "videos")
-output_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frames")
+output_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frames_saanvi_one")
 
 if not os.path.exists(input_folder):
     print(f"Error: The input folder {input_folder} does not exist.")
